@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Platibus.AspNetCore;
 
 namespace Platibus.Registry.SampleWebapp
 {
@@ -30,8 +27,15 @@ namespace Platibus.Registry.SampleWebapp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddSingleton<AspNetCoreLoggingSink>();
+            var serviceProvider = services.BuildServiceProvider();
+            services.AddPlatibus(configuration =>
+            {
+                var sink = serviceProvider.GetService<AspNetCoreLoggingSink>();
+                configuration.DiagnosticService.AddSink(sink);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +52,7 @@ namespace Platibus.Registry.SampleWebapp
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UsePlatibusMiddleware();
 
             app.UseMvc();
         }

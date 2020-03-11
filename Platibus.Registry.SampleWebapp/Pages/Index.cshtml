@@ -1,10 +1,45 @@
 ﻿@page
+@using Platibus.Registry.SampleWebapp.Models
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+}
+
+@if (Model.SaveSuccess == true)
+{
+    <div class="alert alert-success">
+        Save success
+    </div>
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+<form method="post" asp-page-handler="add">
+
+    <div class="form-group">
+        <label asp-for="AddUserInputs.Email"></label>
+        <input type="email" class="form-control" asp-for="AddUserInputs.Email">
+        <span asp-validation-for="AddUserInputs.Email"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="AddUserInputs.Username"></label>
+        <input type="email" class="form-control" asp-for="AddUserInputs.Username">
+        <span asp-validation-for="AddUserInputs.Username"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="AddUserInputs.SecureTideType"></label>
+        <select asp-for="AddUserInputs.SecureTideType" asp-items="Html.GetEnumSelectList<SecureTideServiceType>()"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add User</button>
+</form>
+
+@section Scripts
+{
+    @await Html.PartialAsync("Shared/_ValidationScriptsPartial")
+}
